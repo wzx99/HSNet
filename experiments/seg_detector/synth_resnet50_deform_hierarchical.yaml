@@ -1,0 +1,62 @@
+import:
+    - 'experiments/seg_detector/synth_hierarchical.yaml'
+package: []
+define:
+  - name: 'Experiment'
+    class: Experiment
+    structure: 
+        class: Structure
+        builder: 
+            class: Builder
+            model: SegDetectorModel
+            model_args:
+                backbone: deformable_resnet50
+                decoder: HierarchicalDetector
+                decoder_args: 
+                    in_channels: [256, 512, 1024, 2048]
+                    parts: 3
+                    num_encoder_layers: 3
+                loss_class: DistSegLossDSN
+                loss_kwargs:
+                    fin_scale: 1
+        representer:
+            class: SegDetectorRepresenter
+            max_candidates: 1000
+        measurer:  
+            class: QuadMeasurer
+        visualizer:  
+            class: SegDetectorVisualizer
+    train: 
+        class: TrainSettings
+        data_loader: 
+            class: DataLoader
+            dataset: ^train_data
+            batch_size: 24
+            num_workers: 4
+        checkpoint: 
+            class: Checkpoint
+            start_epoch: 0
+            start_iter: 0
+            resume: null
+        model_saver: 
+            class: ModelSaver
+            dir_path: model
+            save_interval: 3000
+            signal_path: save
+        scheduler: 
+            class: OptimizerScheduler
+            optimizer: "SGD"
+            optimizer_args:
+                lr: 0.007
+                momentum: 0.9
+                weight_decay: 0.0001
+            learning_rate:  
+                class: DecayLearningRate
+                epochs: 1
+        epochs: 0 
+
+    logger:
+        class: Logger
+        verbose: true
+        level: info
+        log_interval: 450

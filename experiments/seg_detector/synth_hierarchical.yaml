@@ -1,0 +1,33 @@
+import:
+    - 'experiments/base.yaml'
+package:
+    - 'decoders.seg_detector_loss'
+define:
+  - name: train_data
+    class: HierarchicalSynthDataset
+    data_dir:
+        - 'path/to/SynthText'
+    data_list:
+        - 'path/to/SynthText/gt.mat'
+    processes:
+        - class: AugmentFlipSegData
+          flip_p: 0.5
+        - class: AugmentDetectionSegData
+          augmenter_args:
+              - {'cls': 'Affine', 'rotate': [-10, 10]}
+              - ['Resize', [0.5, 3.0]]
+          only_resize: False
+          keep_ratio: False
+        - class: RandomCropSegData
+          size: [640, 640]
+          max_tries: 10
+        - class: MakeICDARSegData
+        - class: MakeSegDetectionData
+        - class: MakeSegMaps
+          parts: 3  
+        - class: MakeDistMaps
+          bg_value: 640 
+        - class: NormalizeImage
+        - class: FilterKeys
+          superfluous: ['polygons', 'filename', 'shape', 'ignore_tags', 'is_training', 'seg_polygons']
+    parts: 3

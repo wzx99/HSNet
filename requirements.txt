@@ -1,0 +1,17 @@
+pyyaml 
+tqdm 
+tensorboardX 
+opencv-python-headless==4.5.4.58
+anyconfig 
+munch 
+scipy 
+sortedcontainers 
+shapely==1.8.0
+pyclipper 
+gevent 
+gevent-websocket 
+flask 
+editdistance 
+scikit-image 
+scikit-learn
+imgaug==0.2.8
